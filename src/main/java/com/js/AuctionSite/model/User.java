@@ -12,8 +12,10 @@ import java.util.List;
 public class User {
     @Id
     private String login;
-    private String hashedPassword;
+    private String password;
     private String accountName;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Authority authority;
     private String province;
     private String city;
     @ManyToOne
@@ -21,6 +23,7 @@ public class User {
     private Address address;
     private Date date;
     private String type;
+    private boolean enabled;
 
     @OneToMany(mappedBy = "user")
     private List<Auction> auction = new ArrayList<>();
@@ -38,16 +41,16 @@ public class User {
     String avatarFileName;
 
 
-    public User(String login, String hashedPassword, String accountName) {
+    public User(String login, String password, String accountName) {
         this.login = login;
-        this.hashedPassword = hashedPassword;
+        this.password = password;
         this.accountName = accountName;
     }
 
     public User(String login, String password, String accountName, String province,
                 String city, Address address, Date date) {
         this.login = login;
-        this.hashedPassword = password;/*new SHA256().hashPassword(password);*/
+        this.password = password;/*new SHA256().hashPassword(password);*/
         this.accountName = accountName;
         this.province = province;
         this.city = city;
@@ -58,12 +61,28 @@ public class User {
     public User() {
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Authority getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(Authority authority) {
+        this.authority = authority;
+    }
+
     public void setLogin(String login) {
         this.login = login;
     }
 
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setProvince(String province) {
@@ -134,8 +153,8 @@ public class User {
         return login;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
+    public String getPassword() {
+        return password;
     }
 
     public String getProvince() {
@@ -162,7 +181,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "login='" + login + '\'' +
-                ", hashedPassword='" + hashedPassword + '\'' +
+                ", password='" + password + '\'' +
                 ", accountName='" + accountName + '\'' +
                 ", province='" + province + '\'' +
                 ", city='" + city + '\'' +
